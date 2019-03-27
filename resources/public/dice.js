@@ -1,5 +1,7 @@
+var squareRotation = 0.0;
 
 async function main() {
+	
 	const canvas = document.querySelector("#diceCanvas");
 	const g = canvas.getContext("webgl");
 
@@ -10,18 +12,26 @@ async function main() {
 	
 	const vsSource = `
 		attribute vec4 aVertexPosition;
+		attribute vec2 aTextureCoord;
 		
 		uniform mat4 uModelViewMatrix;
 		uniform mat4 uProjectionMatrix;
 		
+		varying highp vec2 vTextureCoord;
+		
 		void main() {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+			//vTextureCoord = aTextureCoord;
 		}
 	`;
 
 	const fsSource = `
+		varying highp vec2 vTextureCoord;
+		
+		uniform sampler2D uSampler;
+		
 		void main() {
-			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+			gl_FragColor = vec4(1, 0, 0, 1); //texture2D(uSampler, vTextureCoord);
 		}
 	`;
 
@@ -29,20 +39,87 @@ async function main() {
 	const programInfo = {
 		program: shaderProgram,
 		attribLocations: {
-			vertexPositions: g.getAttribLocation(shaderProgram, "aVertexPosition")
+			vertexPositions: g.getAttribLocation(shaderProgram, "aVertexPosition"),
+			textureCoord: g.getAttribLocation(shaderProgram, "aTextureCoord")
 		},
 		uniformLocations: {
 			projectionMatrix: g.getUniformLocation(shaderProgram, "uProjectionMatrix"),
-			modelViewMatrix: g.getUniformLocation(shaderProgram, "uModelViewMatrix")
+			modelViewMatrix: g.getUniformLocation(shaderProgram, "uModelViewMatrix"),
+			uSampler: g.getUniformLocation(shaderProgram, "uSampler")
 		}
 	}
 
 	const buffers = await initBuffers(g);
+	const texture = await initTexture(g, "d6.png");
+	
+	var then = 0;
+	
+	function render(now) {
+		now *= .001;
+		const deltaTime = now - then;
+		then = now;
+		
+		drawScene(g, programInfo, buffers, texture, deltaTime);
+		
+		requestAnimationFrame(render);
+	}
+	requestAnimationFrame(render);
 
-	drawScene(g, programInfo, buffers);
 }
 
 async function initBuffers(g) {
+	
+	const textureCoordBuffer = g.createBuffer();
+	g.bindBuffer(g.ARRAY_BUFFER, textureCoordBuffer);
+	
+	const textureCoordinates = [
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+		// lower right corner
+		0.5, 0.0,
+		0.5, 1/3,
+		0.0, 1/3,
+		//
+		0.0, 0.0,
+		0.0, 0.0,
+		0.0, 0.0,
+
+		0.0, 0.0,
+		0.0, 0.0,
+		0.0, 0.0,
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+		//upper left corner
+		0.0, 0.0,
+		0.5, 0.0,
+		0.0, 1/3,
+		//
+	];
+	
+	g.bufferData(g.ARRAY_BUFFER, new Float32Array(textureCoordinates), g.STATIC_DRAW);
 
 	const positionBuffer = g.createBuffer();
 	g.bindBuffer(g.ARRAY_BUFFER, positionBuffer);
@@ -52,11 +129,27 @@ async function initBuffers(g) {
 
 	return {
 		position: positionBuffer,
+		textureCoord: textureCoordBuffer,
 		mesh: mesh
 	};
 }
 
-function drawScene(g, programInfo, buffers) {
+async function initTexture(g, url) {
+	const image = await loadImage(url);
+	
+	const texture = g.createTexture();
+	g.bindTexture(g.TEXTURE_2D, texture);
+		
+	g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, image);
+	
+	g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE);
+	g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE);
+	g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR);
+	
+	return texture;
+}
+
+function drawScene(g, programInfo, buffers, texture, deltaTime) {
 	g.clearColor(0.0, 0.0, 0.0, 1.0);
 	g.clearDepth(1.0);
 	g.enable(g.DEPTH_TEST);
@@ -73,9 +166,14 @@ function drawScene(g, programInfo, buffers) {
 
 	const modelViewMatrix = mat4.create();
 	mat4.translate(modelViewMatrix, modelViewMatrix, [-0, 0, -3]);
+	
+	mat4.rotate(modelViewMatrix,
+			modelViewMatrix,
+			squareRotation,
+			[0, 1, 0]);
 
 	{
-		const numComponents = 2;
+		const numComponents = 3;
 		const type = g.FLOAT;
 		const normalize = false;
 		const stride = 0;
@@ -93,6 +191,17 @@ function drawScene(g, programInfo, buffers) {
 			programInfo.attribLocations.vertexPositions
 		);
 	}
+	
+	{
+		const num = 2;
+		const type = g.FLOAT;
+		const normalize = false;
+		const stride = 0;
+		const offset = 0;
+		g.bindBuffer(g.ARRAY_BUFFER, buffers.textureCoord);
+		g.vertexAttribPointer(programInfo.attribLocations.textureCoord, num, type, normalize, stride, offset);
+		g.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
+	}
 
 	g.useProgram(programInfo.program);
 	g.uniformMatrix4fv(
@@ -107,11 +216,16 @@ function drawScene(g, programInfo, buffers) {
 	);
 
 	{
+		g.activeTexture(g.TEXTURE0);
+		g.bindTexture(g.TEXTURE_2D, texture);
+		g.uniform1i(programInfo.uniformLocations.uSampler, 0);
+		
 		const primitive = g[buffers.mesh.primitiveType];
 		const offset = 0;
 		const vertexCount = buffers.mesh.vertexCount;
 		g.drawArrays(primitive, offset, vertexCount);
 	}
+	squareRotation += deltaTime;
 }
 
 function initShaderProgram(g, vsSource, fsSource) {
