@@ -21,7 +21,7 @@ async function main() {
 		
 		void main() {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-			//vTextureCoord = aTextureCoord;
+			vTextureCoord = aTextureCoord;
 		}
 	`;
 
@@ -31,7 +31,7 @@ async function main() {
 		uniform sampler2D uSampler;
 		
 		void main() {
-			gl_FragColor = vec4(1, 0, 0, 1); //texture2D(uSampler, vTextureCoord);
+			gl_FragColor = texture2D(uSampler, vTextureCoord);
 		}
 	`;
 
@@ -63,8 +63,8 @@ async function main() {
 		
 		requestAnimationFrame(render);
 	}
+	
 	requestAnimationFrame(render);
-
 }
 
 async function initBuffers(g) {
@@ -73,50 +73,59 @@ async function initBuffers(g) {
 	g.bindBuffer(g.ARRAY_BUFFER, textureCoordBuffer);
 	
 	const textureCoordinates = [
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
+		//left - bottom right
+		1/3, 0.5,
+		0.0, 1.0,
+		1/3, 1.0,
+		//back - bottom right
+		1.0, 0.5,
+		2/3, 1.0,
+		1.0, 1.0,
 
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
-		// lower right corner
-		0.5, 0.0,
-		0.5, 1/3,
-		0.0, 1/3,
-		//
-		0.0, 0.0,
-		0.0, 0.0,
-		0.0, 0.0,
+		//right - bottom right
+		1.0, 0.0,
+		2/3, 0.5,
+		1.0, 0.5,
+		//front - bottom right
+		1/3, 0.0,
+		0.0, 0.5,
+		1/3, 0.5,
 
-		0.0, 0.0,
-		0.0, 0.0,
-		0.0, 0.0,
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
+		//bottom - bottom left
+		2/3, 0.5,
+		1/3, 0.0,
+		1/3, 0.5,
+		//top - top right
+		1/3, 0.5,
+		2/3, 1.0,
+		2/3, 0.5,
 
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
+		//left - top left
+		1/3, 0.5,
+		0.0, 0.5,
+		0.0, 1.0,
+		//back - top left
+		1.0, 0.5,
+		2/3, 0.5,
+		2/3, 1.0,
 
+		//right - top left
+		1.0, 0.0,
+		2/3, 0.0,
+		2/3, 0.5,
+		//front - top left
+		1/3, 0.0,
 		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
-		//upper left corner
-		0.0, 0.0,
-		0.5, 0.0,
-		0.0, 1/3,
-		//
+		0.0, 0.5,
+
+		//bottom - top right
+		2/3, 0.5,
+		2/3, 0.0,
+		1/3, 0.0,
+		//top - bottom left
+		1/3, 0.5,
+		1/3, 1.0,
+		2/3, 1.0
 	];
 	
 	g.bufferData(g.ARRAY_BUFFER, new Float32Array(textureCoordinates), g.STATIC_DRAW);
@@ -170,6 +179,11 @@ function drawScene(g, programInfo, buffers, texture, deltaTime) {
 	mat4.rotate(modelViewMatrix,
 			modelViewMatrix,
 			squareRotation,
+			[1, 0, 0]);
+	
+	mat4.rotate(modelViewMatrix,
+			modelViewMatrix,
+			squareRotation * 0.7,
 			[0, 1, 0]);
 
 	{
