@@ -50,7 +50,7 @@ async function main() {
 	}
 
 	const buffers = await initBuffers(g);
-	const texture = await initTexture(g, "d6.png");
+	const texture = await initTexture(g, "d4.png");
 	
 	var then = 0;
 	
@@ -73,59 +73,22 @@ async function initBuffers(g) {
 	g.bindBuffer(g.ARRAY_BUFFER, textureCoordBuffer);
 	
 	const textureCoordinates = [
-		//left - bottom right
-		1/3, 0.5,
-		0.0, 1.0,
-		1/3, 1.0,
-		//back - bottom right
+		//1,2,3
+		0.0, 0.5,
+		0.5, 0.5,
+		0.25, 0.0,
+		//1,2,4
+		0.5, 0.5,
 		1.0, 0.5,
-		2/3, 1.0,
+		.75, 0.0,
+		//1,3,4
+		0.0, 1.0,
+		0.5, 1.0,
+		.25, .5,
+		//4,3,2
+		0.5, 1.0,
 		1.0, 1.0,
-
-		//right - bottom right
-		1.0, 0.0,
-		2/3, 0.5,
-		1.0, 0.5,
-		//front - bottom right
-		1/3, 0.0,
-		0.0, 0.5,
-		1/3, 0.5,
-
-		//bottom - bottom left
-		2/3, 0.5,
-		1/3, 0.0,
-		1/3, 0.5,
-		//top - top right
-		1/3, 0.5,
-		2/3, 1.0,
-		2/3, 0.5,
-
-		//left - top left
-		1/3, 0.5,
-		0.0, 0.5,
-		0.0, 1.0,
-		//back - top left
-		1.0, 0.5,
-		2/3, 0.5,
-		2/3, 1.0,
-
-		//right - top left
-		1.0, 0.0,
-		2/3, 0.0,
-		2/3, 0.5,
-		//front - top left
-		1/3, 0.0,
-		0.0, 0.0,
-		0.0, 0.5,
-
-		//bottom - top right
-		2/3, 0.5,
-		2/3, 0.0,
-		1/3, 0.0,
-		//top - bottom left
-		1/3, 0.5,
-		1/3, 1.0,
-		2/3, 1.0
+		.75, .5
 	];
 	
 	g.bufferData(g.ARRAY_BUFFER, new Float32Array(textureCoordinates), g.STATIC_DRAW);
@@ -133,7 +96,7 @@ async function initBuffers(g) {
 	const positionBuffer = g.createBuffer();
 	g.bindBuffer(g.ARRAY_BUFFER, positionBuffer);
 
-	const mesh = await fetch("/mesh/d6").then(r => r.json());
+	const mesh = await fetch("/mesh/d4").then(r => r.json());
 	g.bufferData(g.ARRAY_BUFFER, new Float32Array(mesh.vertices), g.STATIC_DRAW);
 
 	return {
