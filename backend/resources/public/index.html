@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DnD Dice Thrower</title>
+    <script src="//cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            min-height: 100%;
+        }
+
+        #app {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #diceCanvas {
+            width: 100vw;
+        }
+
+        #inputs {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        p {
+            font-size: 10vmin;
+            margin: 0;
+        }
+
+        input,
+        select {
+            font-size: 4vmin;
+            text-align: center;
+            margin: .25em .125em
+        }
+
+        input[type=number] {
+            width: 2em;
+        }
+    </style>
+
+    <script>
+        'use strict';
+
+        function resizeCanvas() {
+            const app = document.querySelector("#app");
+            const canvas = app.querySelector("#diceCanvas");
+            const footer = app.querySelector("#inputs");
+
+            const height = app.offsetHeight - footer.offsetHeight - 1;
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = height;
+        }
+
+        function drawCanvas() {
+            const canvas = document.querySelector("#diceCanvas");
+            const g = canvas.getContext("webgl");
+
+            if (g == null) {
+                alert("Unable to initialize WebGL.");
+            }
+
+            g.clearColor(0, 0, 0, 1);
+            g.clear(g.COLOR_BUFFER_BIT);
+        }
+
+        window.addEventListener("load", function () {
+            resizeCanvas();
+            drawCanvas();
+        });
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <canvas id="diceCanvas" style="background-color: chartreuse;"></canvas>
+        <div id="inputs">
+            <p>
+                <span v-if="dice.numberDice > 1">{{ dice.numberDice }}</span>{{ dice.numberSides }}<span v-if="dice.modifier > 0">+</span><span
+                    v-if="dice.modifier !== 0">{{ dice.modifier }}</span>
+            </p>
+            <div>
+                <input v-model.number="dice.numberDice" type="number" size="3" />
+                <select v-model="dice.numberSides">
+                    <option v-for="dice in diceTypes" v-bind:value="dice">
+                        {{ dice }}
+                    </option>
+                </select>
+                <input v-model.number="dice.modifier" type="number" size="3" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+        const app = new Vue({
+            el: '#app',
+            data: {
+                dice: {
+                    numberDice: 2,
+                    numberSides: "d4",
+                    modifier: 1
+                },
+                diceTypes: []
+            },
+            created() {
+                fetch("/dice/")
+                    .then(response => response.json())
+                    .then(json => this.diceTypes = json);
+            }
+        });
+    </script>
+</body>
+
+</html>
