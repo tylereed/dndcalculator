@@ -5,8 +5,8 @@ import lombok.Value;
 @Value
 public class MeshResult {
 
-	private String primitiveType;
-	private double[] vertices;
+	private final String primitiveType;
+	private final double[] vertices;
 	
 	public MeshResult(double[] vertices) {
 		this.primitiveType = "TRIANGLES";

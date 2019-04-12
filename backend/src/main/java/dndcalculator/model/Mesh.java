@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 import lombok.Value;
@@ -25,13 +27,22 @@ public class Mesh {
 	
 	public static Mesh parseFile(Path path) throws IOException {
 		var lines = Files.readAllLines(path);
-		
+		return parseHelper(lines);
+	}
+	
+	public static Mesh parse(String body) {
+		var lines = List.of(body.split("\n"));
+		return parseHelper(lines);
+	}
+	
+	private static Mesh parseHelper(Collection<String> lines) {
 		var vertices = lines.stream().filter(l -> l.startsWith("v ")).map(Mesh::parseVertex).toArray(i -> new Vertex[i]);
 		var normals = lines.stream().filter(l -> l.startsWith("vn")).map(Mesh::parseNormal).toArray(i -> new Normal[i]);
 		
 		var faces = lines.stream().filter(l -> l.startsWith("f")).map(l -> parseFace(l, vertices, normals)).toArray(i -> new Face[i]);
 		
 		return new Mesh(faces);
+		
 	}
 	
 	private static Vertex parseVertex(String l) {
