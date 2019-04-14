@@ -18,9 +18,9 @@ public class Dice {
 	@Setter(AccessLevel.NONE)
 	private Integer id;
 	private String name;
-	//private String primitiveType;
+	private String primitiveType;
 	private String obj;
-	private byte[] texture;
-	//private String textureCoords;
+	private String texture;
+	private String textureCoords;
 
 }

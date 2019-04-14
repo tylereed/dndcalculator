@@ -1,9 +1,9 @@
+'use strict';
+
 var squareRotation = 0.0;
 
-async function main() {
-	
-	const canvas = document.querySelector("#diceCanvas");
-	const g = canvas.getContext("webgl");
+function init() {
+	const g = document.querySelector("#diceCanvas").getContext("webgl");
 
 	if (!g) {
 		alert("Unable to initialize WebGL.");
@@ -36,21 +36,30 @@ async function main() {
 	`;
 
 	const shaderProgram = initShaderProgram(g, vsSource, fsSource);
-	const programInfo = {
-		program: shaderProgram,
-		attribLocations: {
-			vertexPositions: g.getAttribLocation(shaderProgram, "aVertexPosition"),
-			textureCoord: g.getAttribLocation(shaderProgram, "aTextureCoord")
-		},
-		uniformLocations: {
-			projectionMatrix: g.getUniformLocation(shaderProgram, "uProjectionMatrix"),
-			modelViewMatrix: g.getUniformLocation(shaderProgram, "uModelViewMatrix"),
-			uSampler: g.getUniformLocation(shaderProgram, "uSampler")
+	return {
+		g: g,
+		programInfo: {
+			program: shaderProgram,
+			attribLocations: {
+				vertexPositions: g.getAttribLocation(shaderProgram, "aVertexPosition"),
+				textureCoord: g.getAttribLocation(shaderProgram, "aTextureCoord")
+			},
+			uniformLocations: {
+				projectionMatrix: g.getUniformLocation(shaderProgram, "uProjectionMatrix"),
+				modelViewMatrix: g.getUniformLocation(shaderProgram, "uModelViewMatrix"),
+				uSampler: g.getUniformLocation(shaderProgram, "uSampler")
+			}
 		}
 	}
+}
 
-	const buffers = await initBuffers(g);
-	const texture = await initTexture(g, "d4.png");
+async function drawLoop(g, programInfo, dieType) {
+
+	const die = await fetch("/dice/" + dieType).then(r => r.json());
+	const image = await loadImage(die.texture);
+
+	const buffers = initBuffers(g, die);
+	const texture = initTexture(g, image);
 	
 	var then = 0;
 	
@@ -67,48 +76,34 @@ async function main() {
 	requestAnimationFrame(render);
 }
 
-async function initBuffers(g) {
-	
+function initBuffers(g, die) {
 	const textureCoordBuffer = g.createBuffer();
 	g.bindBuffer(g.ARRAY_BUFFER, textureCoordBuffer);
 	
-	const textureCoordinates = [
-		//1,2,3
-		0.0, 0.5,
-		0.5, 0.5,
-		0.25, 0.0,
-		//1,2,4
-		0.5, 0.5,
-		1.0, 0.5,
-		.75, 0.0,
-		//1,3,4
-		0.0, 1.0,
-		0.5, 1.0,
-		.25, .5,
-		//4,3,2
-		0.5, 1.0,
-		1.0, 1.0,
-		.75, .5
-	];
-	
-	g.bufferData(g.ARRAY_BUFFER, new Float32Array(textureCoordinates), g.STATIC_DRAW);
+	g.bufferData(g.ARRAY_BUFFER, new Float32Array(die.textureCoords), g.STATIC_DRAW);
 
 	const positionBuffer = g.createBuffer();
 	g.bindBuffer(g.ARRAY_BUFFER, positionBuffer);
 
-	const mesh = await fetch("/mesh/d4").then(r => r.json());
-	g.bufferData(g.ARRAY_BUFFER, new Float32Array(mesh.vertices), g.STATIC_DRAW);
+	g.bufferData(g.ARRAY_BUFFER, new Float32Array(die.vertices), g.STATIC_DRAW);
 
 	return {
 		position: positionBuffer,
 		textureCoord: textureCoordBuffer,
-		mesh: mesh
+		die: die
 	};
 }
 
-async function initTexture(g, url) {
-	const image = await loadImage(url);
-	
+function loadImage(path) {
+	return new Promise((resolve, reject) => {
+		const img = new Image();
+		img.onload = () => resolve(img);
+		img.onerror = reject;
+		img.src = path;
+	});
+}
+
+function initTexture(g, image) {	
 	const texture = g.createTexture();
 	g.bindTexture(g.TEXTURE_2D, texture);
 		
@@ -197,50 +192,10 @@ function drawScene(g, programInfo, buffers, texture, deltaTime) {
 		g.bindTexture(g.TEXTURE_2D, texture);
 		g.uniform1i(programInfo.uniformLocations.uSampler, 0);
 		
-		const primitive = g[buffers.mesh.primitiveType];
+		const primitive = g[buffers.die.primitiveType];
 		const offset = 0;
-		const vertexCount = buffers.mesh.vertexCount;
+		const vertexCount = buffers.die.vertexCount;
 		g.drawArrays(primitive, offset, vertexCount);
 	}
 	squareRotation += deltaTime;
 }
-
-function initShaderProgram(g, vsSource, fsSource) {
-	const vertexShader = loadShader(g, g.VERTEX_SHADER, vsSource);
-	const fragmentShader = loadShader(g, g.FRAGMENT_SHADER, fsSource);
-
-	const program = g.createProgram();
-	g.attachShader(program, vertexShader);
-	g.attachShader(program, fragmentShader);
-	g.linkProgram(program);
-
-	if (!g.getProgramParameter(program, g.LINK_STATUS)) {
-		alert("Unable to initialize the shader program: " + g.getProgramInfoLog(program));
-		return null;
-	}
-
-	return program;
-}
-
-function loadImage(path) {
-	return new Promise((resolve, reject) => {
-		const img = new Image();
-		img.onload = () => resolve(img);
-		img.onerror = reject;
-		img.src = path;
-	});
-}
-
-function loadShader(g, type, source) {
-	const shader = g.createShader(type);
-	g.shaderSource(shader, source);
-	g.compileShader(shader);
-	if (!g.getShaderParameter(shader, g.COMPILE_STATUS)) {
-		alert("An error occurred compiling the shaders: " + g.getShaderInfoLog(shader));
-		g.deleteShader(shader);
-		return null;
-	}
-	return shader;
-}
-
-window.onload = main;

@@ -1,6 +1,6 @@
-INSERT INTO Dice (name, primitiveType, obj, textureCoords)
+INSERT INTO Dice (name, primitive_type, texture, obj, texture_coords)
 VALUES
-    ( 'd6','TRIANGLES',
+    ( 'd6','TRIANGLES', '/d6.png',
 '# Blender v2.79 (sub 0) OBJ File: ''d6.blend''
 # www.blender.org
 o Cube_Cube.001
@@ -31,62 +31,55 @@ f 8//3 6//3 5//3
 f 6//4 2//4 1//4
 f 7//5 5//5 1//5
 f 4//6 2//6 6//6',
-'const textureCoordinates = [
-	//left - bottom right
-	1/3, 0.5,
-	0.0, 1.0,
-	1/3, 1.0,
-	//back - bottom right
-	1.0, 0.5,
-	2/3, 1.0,
-	1.0, 1.0,
-
-	//right - bottom right
-	1.0, 0.0,
-	2/3, 0.5,
-	1.0, 0.5,
-	//front - bottom right
-	1/3, 0.0,
-	0.0, 0.5,
-	1/3, 0.5,
-
-	//bottom - bottom left
-	2/3, 0.5,
-	1/3, 0.0,
-	1/3, 0.5,
-	//top - top right
-	1/3, 0.5,
-	2/3, 1.0,
-	2/3, 0.5,
-
-	//left - top left
-	1/3, 0.5,
-	0.0, 0.5,
-	0.0, 1.0,
-	//back - top left
-	1.0, 0.5,
-	2/3, 0.5,
-	2/3, 1.0,
-
-	//right - top left
-	1.0, 0.0,
-	2/3, 0.0,
-	2/3, 0.5,
-	//front - top left
-	1/3, 0.0,
-	0.0, 0.0,
-	0.0, 0.5,
-
-	//bottom - top right
-	2/3, 0.5,
-	2/3, 0.0,
-	1/3, 0.0,
-	//top - bottom left
-	1/3, 0.5,
-	1/3, 1.0,
-	2/3, 1.0
-];'),
-    ('d4', 'TRIANGLES',
+'//left - bottom right
+1/3, 0.5,
+0.0, 1.0,
+1/3, 1.0,
+//back - bottom right
+1.0, 0.5,
+2/3, 1.0,
+1.0, 1.0,
+//right - bottom right
+1.0, 0.0,
+2/3, 0.5,
+1.0, 0.5,
+//front - bottom right
+1/3, 0.0,
+0.0, 0.5,
+1/3, 0.5,
+//bottom - bottom left
+2/3, 0.5,
+1/3, 0.0,
+1/3, 0.5,
+//top - top right
+1/3, 0.5,
+2/3, 1.0,
+2/3, 0.5,
+//left - top left
+1/3, 0.5,
+0.0, 0.5,
+0.0, 1.0,
+//back - top left
+1.0, 0.5,
+2/3, 0.5,
+2/3, 1.0,
+//right - top left
+1.0, 0.0,
+2/3, 0.0,
+2/3, 0.5,
+//front - top left
+1/3, 0.0,
+0.0, 0.0,
+0.0, 0.5,
+//bottom - top right
+2/3, 0.5,
+2/3, 0.0,
+1/3, 0.0,
+//top - bottom left
+1/3, 0.5,
+1/3, 1.0,
+2/3, 1.0'),
+    ('d4', 'TRIANGLES', '/d4.png',
 '# Blender v2.79 (sub 0) OBJ File: ''d4.blend''
 # www.blender.org
 o Pyramid
@@ -104,21 +97,19 @@ f 3//1 1//1 2//1
 f 1//2 4//2 2//2
 f 4//3 3//3 2//3
 f 1//4 3//4 4//4',
-'const textureCoordinates = [
-	//1,2,3
-	0.0, 0.5,
-	0.5, 0.5,
-	0.25, 0.0,
-	//1,2,4
-	0.5, 0.5,
-	1.0, 0.5,
-	.75, 0.0,
-	//1,3,4
-	0.0, 1.0,
-	0.5, 1.0,
-	.25, .5,
-	//4,3,2
-	0.5, 1.0,
-	1.0, 1.0,
-	.75, .5
-];');
+'//1,2,3
+0.0, 0.5,
+0.5, 0.5,
+0.25, 0.0,
+//1,2,4
+0.5, 0.5,
+1.0, 0.5,
+.75, 0.0,
+//1,3,4
+0.0, 1.0,
+0.5, 1.0,
+.25, .5,
+//4,3,2
+0.5, 1.0,
+1.0, 1.0,
+.75, .5');

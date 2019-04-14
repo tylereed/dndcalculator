@@ -3,15 +3,12 @@ package dndcalculator.model;
 import lombok.Value;
 
 @Value
-public class MeshResult {
+public class DieResult {
 
 	private final String primitiveType;
 	private final double[] vertices;
-	
-	public MeshResult(double[] vertices) {
-		this.primitiveType = "TRIANGLES";
-		this.vertices = vertices;
-	}
+	private final String texture;
+	private final double[] textureCoords;
 	
 	public int getVertexCount() {
 		return vertices.length / 3;

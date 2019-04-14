@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import dndcalculator.db.DiceRepository;
+import dndcalculator.model.DieResult;
 import dndcalculator.model.Mesh;
-import dndcalculator.model.MeshResult;
+import dndcalculator.model.TextureCoordinates;
 
 @RestController
 public class DiceController {
@@ -36,24 +37,22 @@ public class DiceController {
 
 	@GetMapping("/dice/{name}")
 	@Transactional(readOnly = true)
-	public ResponseEntity<MeshResult> loadMesh(@PathVariable String name) {
-		var result = repository.findByName(name);
+	public ResponseEntity<DieResult> loadDie(@PathVariable String name) {
+		var die = repository.findByName(name);
 		
-		if (result == null) {
+		if (die == null) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		var mesh = Mesh.parse(result.getObj());
-		
+		var mesh = Mesh.parse(die.getObj());
 		var vertices = mesh.getFaces()
-				.flatMap(f -> f.getVerticesWithNormals())
-				.flatMapToDouble(vn -> {
-					var v = vn.getVertex();
-					return DoubleStream.of(v.getX(), v.getY(), v.getZ());
-				})
+				.flatMap(f -> f.getVertices())
+				.flatMapToDouble(v -> DoubleStream.of(v.getX(), v.getY(), v.getZ()))
 				.toArray();
 		
-		return ResponseEntity.ok(new MeshResult(vertices));
+		var coords = TextureCoordinates.parseCoords(die.getTextureCoords());
+		
+		return ResponseEntity.ok(new DieResult(die.getPrimitiveType(), vertices, die.getTexture(), coords));
 	}
 
 }

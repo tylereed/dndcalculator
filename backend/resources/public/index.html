@@ -4,6 +4,7 @@
 <head>
     <title>DnD Dice Thrower</title>
     <script src="//cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix.js"></script>
     <style>
         html {
             height: 100%;
@@ -45,6 +46,9 @@
             width: 2em;
         }
     </style>
+    
+    <script src="/gl.js"></script>
+    <script src="/dice.js"></script>
 
     <script>
         'use strict';
@@ -60,21 +64,10 @@
             canvas.height = height;
         }
 
-        function drawCanvas() {
-            const canvas = document.querySelector("#diceCanvas");
-            const g = canvas.getContext("webgl");
-
-            if (g == null) {
-                alert("Unable to initialize WebGL.");
-            }
-
-            g.clearColor(0, 0, 0, 1);
-            g.clear(g.COLOR_BUFFER_BIT);
-        }
-
         window.addEventListener("load", function () {
-            resizeCanvas();
-            drawCanvas();
+        	resizeCanvas();
+        	const data = init();
+        	drawLoop(data.g, data.programInfo, app.dice.numberSides);
         });
     </script>
 </head>
@@ -89,7 +82,7 @@
             </p>
             <div>
                 <input v-model.number="dice.numberDice" type="number" size="3" />
-                <select v-model="dice.numberSides">
+                <select v-model="dice.numberSides" v-on:change="changeItem($event);">
                     <option v-for="dice in diceTypes" v-bind:value="dice">
                         {{ dice }}
                     </option>
@@ -110,6 +103,11 @@
                     modifier: 1
                 },
                 diceTypes: []
+            },
+            methods: {
+            	changeItem: function (event) {
+            		
+            	}
             },
             created() {
                 fetch("/dice/")
