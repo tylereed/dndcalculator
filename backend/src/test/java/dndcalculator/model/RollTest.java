@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.number.IsCloseTo.closeTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import dndcalculator.exceptions.RollParseException;
 
 public class RollTest {
 
@@ -43,6 +46,12 @@ public class RollTest {
 			Arguments.of("2d6+10", new Roll(2, 6, 10)),
 			Arguments.of("3d12-1", new Roll(3, 12, -1))
 		);
+	}
+	
+	@Test
+	public void parseRollTest_Fails() {
+		var exception = assertThrows(RollParseException.class, () -> Roll.parseRoll("asdf"));
+		assertThat(exception.getMessage(), is("Unable to parse supplied roll asdf"));
 	}
 
 	@ParameterizedTest(name = "{0}")
