@@ -38,6 +38,12 @@ public class Roll {
 		return random.ints(dice, 1, sides+1).sum() + modifier;
 	}
 	
+	public Throw doThrow() {
+		var random = ThreadLocalRandom.current();
+		int sum = random.ints(dice, 1, sides+1).sum();
+		return new Throw(sum, modifier);
+	}
+	
 	public String getName() {
 		var builder = new StringBuilder();
 		

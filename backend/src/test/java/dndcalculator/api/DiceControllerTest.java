@@ -1,27 +1,22 @@
 package dndcalculator.api;
 
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+
 import dndcalculator.db.Dice;
 import dndcalculator.db.DiceRepository;
-import dndcalculator.model.DieResult;
 
 public class DiceControllerTest {
 
@@ -78,8 +73,6 @@ public class DiceControllerTest {
 		var actual = response.getBody();
 		double[] expectedTextureCoords = new double[] { .33333, .5, 0, 1, .33333, 1 };
 		double[] expectedVertices = new double[] { -.5, .5, .5, -.5, -.5, -.5, -.5, -.5, .5 };
-
-		;
 
 		assertAll(() -> assertThat(response.getStatusCode(), is(HttpStatus.OK)),
 				() -> verify(mockRepo).findByName("d6"), () -> verifyNoMoreInteractions(mockRepo),
