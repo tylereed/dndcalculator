@@ -1,7 +1,7 @@
 package dndcalculator.simulation;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -47,7 +47,7 @@ public class Calculator {
 		private Map<Integer, Double> counts;
 
 		public Counter() {
-			counts = new HashMap<>();
+			counts = new TreeMap<>();
 		}
 
 		@Override
@@ -62,9 +62,9 @@ public class Calculator {
 		}
 
 		public Map<Integer, Double> getHistogram(double repititions) {
-			var clone = new HashMap<Integer, Double>();
+			var clone = new TreeMap<Integer, Double>();
 			clone.putAll(counts);
-			clone.forEach((k, v) -> clone.put(k, v / repititions));
+			clone.forEach((k, v) -> clone.put(k, (v / repititions) * 100));
 			return clone;
 		}
 
