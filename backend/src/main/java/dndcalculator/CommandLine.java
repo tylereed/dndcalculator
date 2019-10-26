@@ -28,7 +28,7 @@ public class CommandLine {
 	}
 
 	private static String[] doCalc(Roll attack, Roll damage, int ac, int repetitions) {
-		var sim = new Simulator(attack, damage, ac);
+		var sim = new Simulator(attack, damage, ac, 19);
 
 		double aveDamage = Calculator.calculateAverageDamage(sim, repetitions);
 
@@ -38,7 +38,7 @@ public class CommandLine {
 	}
 
 	private static Stream<String[]> doHistogram(Roll attack, Roll damage, int ac, int repetitions) {
-		var sim = new Simulator(attack, damage, ac);
+		var sim = new Simulator(attack, damage, ac, 19);
 
 		var histogram = Calculator.calculateDamageHistogram(sim, repetitions);
 

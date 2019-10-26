@@ -10,13 +10,14 @@ public class Simulator {
 	private final Roll attackRoll;
 	private final Roll damageRoll;
 	private final int armorClass;
+	private final int critThreshold;
 	
 	public int doAttack() {
 		Throw attackThrow = attackRoll.doThrow();
 		
 		if (isCritFail(attackThrow)) {
 			return 0;
-		} else if (isCritHit(attackThrow)) {
+		} else if (isCritHit(attackThrow, critThreshold)) {
 			return calculateCritDamage(damageRoll);
 		} else if (isHit(attackThrow, armorClass)) {
 			return calculateDamage(damageRoll);
@@ -29,8 +30,8 @@ public class Simulator {
 		return attack.getBase() == 1;
 	}
 	
-	private static boolean isCritHit(Throw attack) {
-		return attack.getBase() >= 19;
+	private boolean isCritHit(Throw attack, int critThreshold) {
+		return attack.getBase() >= critThreshold;
 	}
 	
 	private static boolean isHit(Throw attack, int ac) {

@@ -32,5 +32,4 @@ target/
 *~
 
 # stuff that I don't want to commit yet #
-frontend/
 pom.xml
