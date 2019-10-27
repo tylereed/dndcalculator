@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import dndcalculator.api.result.DieResult;
 import dndcalculator.db.DiceRepository;
-import dndcalculator.model.DieResult;
 import dndcalculator.model.Mesh;
 import dndcalculator.model.TextureCoordinates;
 

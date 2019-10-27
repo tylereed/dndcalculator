@@ -1,4 +1,4 @@
-package dndcalculator.model;
+package dndcalculator.api.result;
 
 import java.beans.ConstructorProperties;
 import java.util.Collection;

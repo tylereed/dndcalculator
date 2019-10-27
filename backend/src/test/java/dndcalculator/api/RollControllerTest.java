@@ -18,7 +18,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-import dndcalculator.model.RollResult;
+import dndcalculator.api.result.RollResult;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RollControllerTest {

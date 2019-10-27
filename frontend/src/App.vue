@@ -1,22 +1,25 @@
 <template>
   <div id="app">
-    <scenario :sim="sim" @calc="doCalculation" />
+    <scenario :scenario="scenario" @calc="doCalculation" />
+    <average-damage ref="foo" :attack="scenario.attack" :damage="scenario.damage" />
   </div>
 </template>
 
 <script>
+import AverageDamage from '@/components/AverageDamage.vue';
 import Scenario from '@/components/Scenario.vue';
-import Roll from '@/gateways/roll.js';
 
+import Calculator from '@/gateways/Calculator.js';
 
 export default {
   name: 'app',
   components: {
-    Scenario
+    Scenario,
+    AverageDamage
   },
   data() {
     return {
-      sim: {
+      scenario: {
         attack: "d20",
         damage: "2d6",
         ac: 13,
@@ -25,18 +28,8 @@ export default {
     }
   },
   methods: {
-    async doCalculation() {
-      try {
-
-        const throws = Roll.getThrows(this.sim.attack, 50);
-        for await (let t of throws) {
-          console.log(t);
-        }
-
-      } catch (error) {
-        console.log("Error performing calculation");
-        console.log(error);
-      }
+    doCalculation() {
+      this.$refs.foo.loadChart();
     }
   }
 }

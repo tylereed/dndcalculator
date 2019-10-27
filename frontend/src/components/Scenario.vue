@@ -1,16 +1,18 @@
 <template>
 	<div id="scenario">
 		<label for="attack">Attack Dice:</label> 
-		<input type="text" id="attack" v-model="sim.attack" />
+		<input type="text" id="attack" v-model="scenario.attack" />
 
 		<label for="damage">Damage Dice:</label>
-		<input type="text" id="damage" v-model="sim.damage" />
+		<input type="text" id="damage" v-model="scenario.damage" />
 
+		<!--
 		<label for="ac">Enemy AC:</label>         
-		<input type="text" id="ac" v-model="sim.ac" />
+		<input type="text" id="ac" v-model="scenario.ac" />
 
 		<label for="health">Enemy Health:</label>
-		<input type="text" id="health" v-model="sim.health" />
+		<input type="text" id="health" v-model="scenario.health" />
+		-->
 
 		<input type="button" id="calc" @click="$emit('calc')" value="Calculate" />
 	</div>
@@ -20,7 +22,7 @@
 export default {
 	name: 'scenario',
 	props: {
-		sim: Object
+		scenario: Object
 	}
 }
 </script>
