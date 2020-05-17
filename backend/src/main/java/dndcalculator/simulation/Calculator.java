@@ -3,6 +3,7 @@ package dndcalculator.simulation;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -17,8 +18,12 @@ public class Calculator {
 	}
 
 	public static Map<Integer, Double> calculateDamageHistogram(Simulator sim, int repititions) {
-		return IntStream.generate(() -> sim.doAttack()).limit(repititions)
-				.collect(Counter::new, Counter::accept, Counter::combine).getHistogram(repititions);
+		return calculateDamageHistogram(() -> sim.doAttack(), repititions);
+	}
+
+	public static Map<Integer, Double> calculateDamageHistogram(IntSupplier sim, int repititions) {
+		return IntStream.generate(sim).limit(repititions).collect(Counter::new, Counter::accept, Counter::combine)
+				.getHistogram(repititions);
 	}
 
 	public static double calculateAverageRounds(Simulator sim, int health, int repititions) {
