@@ -1,45 +1,36 @@
 <template>
-	<div id="scenario">
-		<label for="attack">Attack Dice:</label> 
-		<input type="text" id="attack" v-model="scenario.attack" />
-
-		<label for="damage">Damage Dice:</label>
-		<input type="text" id="damage" v-model="scenario.damage" />
-
-		<!--
-		<label for="ac">Enemy AC:</label>         
-		<input type="text" id="ac" v-model="scenario.ac" />
-
-		<label for="health">Enemy Health:</label>
-		<input type="text" id="health" v-model="scenario.health" />
-		-->
-
-		<input type="button" id="calc" @click="$emit('calc')" value="Calculate" />
-	</div>
+  <v-card class="pa-4 ma-5" id="scenario" width="250" :loading="isLoading">
+    <v-icon class="float-right" @click="remove">mdi-close-circle</v-icon>
+    <v-text-field class="ma-2" label="Attack" v-model="scenario.attack" />
+    <v-text-field class="ma-2" label="Damage" v-model="scenario.damage" />
+  </v-card>
 </template>
 
 <script>
+import debounce from "lodash/debounce";
+
 export default {
-	name: 'scenario',
-	props: {
-		scenario: Object
-	}
-}
+  name: "scenario",
+  props: {
+    scenario: Object,
+    index: Number,
+    isLoading: Boolean,
+  },
+  methods: {
+    remove() {
+      this.$emit("close", this.index);
+    },
+  },
+  watch: {
+    scenario: {
+      handler: debounce(function () {
+        this.$emit("change", this.index);
+      }, 500),
+      deep: true,
+    },
+  },
+};
 </script>
 
-<style scoped>
-	#scenario {
-		display: grid;
-		grid-template-columns: 2fr 1fr 2fr 2fr;
-		grid-gap: .67em;
-	}
-
-	label {
-		text-align: right;
-		grid-column: 2 / 3;
-	}
-
-	input {
-		grid-column: 3 / 4;
-	}
+<style>
 </style>

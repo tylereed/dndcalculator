@@ -5,7 +5,7 @@ export default {
   extends: Line,
   mixins: [reactiveProp],
   props: {
-    chartdata: {
+    chartData: {
       type: Object,
       default: null
     },

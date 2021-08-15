@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import lombok.Value;
 public class CalculatorController {
 
 	@GetMapping({ "/calculate/{attack}/{damage}" })
+	@Cacheable("ACvAD")
 	public CalculationResult<Integer, Double> calculateDamage(@PathVariable String attack, @PathVariable String damage,
 			@RequestParam Optional<Integer> critThreshold, @RequestParam Optional<Integer> repititions) {
 
