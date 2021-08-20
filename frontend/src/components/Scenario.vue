@@ -1,8 +1,11 @@
 <template>
   <v-card class="pa-4 ma-5" id="scenario" width="250" :loading="isLoading">
-    <v-icon class="float-right" @click="remove">mdi-close-circle</v-icon>
+    <v-icon v-if="showClose" class="float-right" @click="remove"
+      >mdi-close-circle</v-icon
+    >
     <v-text-field class="ma-2" label="Attack" v-model="scenario.attack" />
     <v-text-field class="ma-2" label="Damage" v-model="scenario.damage" />
+    <v-text-field v-if="showAc" class="ma-2" label="AC" v-model="scenario.ac" />
   </v-card>
 </template>
 
@@ -19,6 +22,14 @@ export default {
   methods: {
     remove() {
       this.$emit("close", this.index);
+    },
+  },
+  computed: {
+    showAc() {
+      return this.scenario.type === "DamageHistogram";
+    },
+    showClose() {
+      return this.scenario.type === "AverageDamage";
     },
   },
   watch: {

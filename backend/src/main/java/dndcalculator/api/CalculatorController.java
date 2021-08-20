@@ -42,6 +42,22 @@ public class CalculatorController {
 				damageRoll.getName(), result);
 	}
 
+	@GetMapping({ "/histogram/{attack}/{damage}/{ac}" })
+	public CalculationResult<Integer, Double> calculateRounds(@PathVariable String attack, @PathVariable String damage,
+			@PathVariable int ac, @RequestParam Optional<Integer> critThreshold,
+			@RequestParam Optional<Integer> repititions) {
+		var attackRoll = Roll.parseRoll(attack);
+		var damageRoll = Roll.parseRoll(damage);
+		int crit = critThreshold.orElse(20);
+		int reps = repititions.orElse(10000000);
+
+		var sim = new Simulator(attackRoll, damageRoll, ac, crit);
+
+		Map<Integer, Double> result = Calculator.calculateDamageHistogram(sim, reps);
+
+		return new CalculationResult<Integer, Double>("Damage", "Percent", attack, damage, result);
+	}
+
 	@Value
 	private class AverageDamageToAc {
 		private final int armorClass;
