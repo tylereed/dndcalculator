@@ -43,8 +43,8 @@ public class CalculatorController {
 	}
 
 	@GetMapping({ "/histogram/{attack}/{damage}/{ac}" })
-	public CalculationResult<Integer, Double> calculateRounds(@PathVariable String attack, @PathVariable String damage,
-			@PathVariable int ac, @RequestParam Optional<Integer> critThreshold,
+	public CalculationResult<Integer, Double> calculateDamageHistogram(@PathVariable String attack,
+			@PathVariable String damage, @PathVariable int ac, @RequestParam Optional<Integer> critThreshold,
 			@RequestParam Optional<Integer> repititions) {
 		var attackRoll = Roll.parseRoll(attack);
 		var damageRoll = Roll.parseRoll(damage);
@@ -56,6 +56,22 @@ public class CalculatorController {
 		Map<Integer, Double> result = Calculator.calculateDamageHistogram(sim, reps);
 
 		return new CalculationResult<Integer, Double>("Damage", "Percent", attack, damage, result);
+	}
+
+	@GetMapping({ "/rounds/{attack}/{damage}/{ac}/{health}" })
+	public CalculationResult<Integer, Double> calculateRounds(@PathVariable String attack, @PathVariable String damage,
+			@PathVariable int ac, @PathVariable int health, @RequestParam Optional<Integer> critThreshold,
+			@RequestParam Optional<Integer> repititions) {
+		var attackRoll = Roll.parseRoll(attack);
+		var damageRoll = Roll.parseRoll(damage);
+		int crit = critThreshold.orElse(20);
+		int reps = repititions.orElse(1000000);
+
+		var sim = new Simulator(attackRoll, damageRoll, ac, crit);
+
+		Map<Integer, Double> result = Calculator.calculateRoundsHistogram(sim, health, reps);
+
+		return new CalculationResult<Integer, Double>("Rounds", "Percent", attack, damage, result);
 	}
 
 	@Value

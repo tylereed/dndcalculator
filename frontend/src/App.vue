@@ -4,6 +4,7 @@
       <v-tabs v-model="tab">
         <v-tab> Armor Class vs Damage </v-tab>
         <v-tab> Damage Histogram </v-tab>
+        <v-tab> Round Histogram </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
@@ -11,6 +12,9 @@
         </v-tab-item>
         <v-tab-item>
           <damage-histogram />
+        </v-tab-item>
+        <v-tab-item>
+          <round-histogram />
         </v-tab-item>
       </v-tabs-items>
     </v-container>
@@ -20,11 +24,13 @@
 <script>
 import DamageVsAc from "@/views/DamageVsAc.vue";
 import DamageHistogram from "@/views/DamageHistogram.vue";
+import RoundHistogram from "@/views/RoundHistogram.vue";
 
 export default {
   components: {
     DamageVsAc,
     DamageHistogram,
+    RoundHistogram,
   },
   name: "app",
   data() {

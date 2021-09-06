@@ -1,21 +1,19 @@
 const baseUrl = "http://localhost:8081";
 
 export default {
-	async getAverageDamage(attack, damage) {
-		const request = `${baseUrl}/calculate/${attack}/${damage}`;
-
-		const response = await fetch(request);
-		const results = await response.json();
-
-		return results;
+	execute(url) {
+		return fetch(url).then(r => r.json());
 	},
 
-	async getDamageHistogram(attack, damage, ac) {
-		const request = `${baseUrl}/histogram/${attack}/${damage}/${ac}`;
+	getAverageDamage(attack, damage) {
+		return this.execute(`${baseUrl}/calculate/${attack}/${damage}`);
+	},
 
-		const response = await fetch(request);
-		const results = await response.json();
+	getDamageHistogram(attack, damage, ac) {
+		return this.execute(`${baseUrl}/histogram/${attack}/${damage}/${ac}`);
+	},
 
-		return results;
+	getRoundHistogram(attack, damage, ac, health) {
+		return this.execute(`${baseUrl}/rounds/${attack}/${damage}/${ac}/${health}`);
 	}
 }

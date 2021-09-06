@@ -27,7 +27,7 @@ public class Calculator {
 	}
 
 	public static Map<Integer, Double> calculateRoundsHistogram(Simulator sim, int health, int repititions) {
-		return IntStream.generate(() -> simulateNumberRounds(sim, health)).limit(repititions)
+		return IntStream.generate(() -> simulateNumberRounds(sim, health)).limit(repititions).parallel()
 				.collect(Counter::new, Counter::accept, Counter::combine).getHistogram(repititions);
 	}
 
